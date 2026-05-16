@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/", "destination": "/suv-scout.html" }]
+  "rewrites": [
+    { "source": "/api/chat", "destination": "/api/chat" },
+    { "source": "/", "destination": "/index.html" }
+  ]
 }

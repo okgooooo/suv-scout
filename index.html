@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Family SUV Scout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d0f1a; font-family: 'DM Sans', sans-serif; color: #e8e8f0; min-height: 100vh; min-height: 100dvh; }
+    .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 860px; margin: 0 auto; }
+
+    .header { padding: 16px 20px 12px; border-bottom: 1px solid rgba(232,197,71,0.12); background: #0d0f1a; flex-shrink: 0; }
+    .header-top { display: flex; align-items: center; gap: 10px; }
+    .logo-mark { width: 38px; height: 38px; background: linear-gradient(135deg, #e8c547, #c4973a); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .header-text { flex: 1; min-width: 0; }
+    .header-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: #f0ece0; letter-spacing: -0.02em; }
+    .header-sub { font-size: 11px; color: #6b7090; margin-top: 1px; }
+    .header-badges { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+    .live-badge { display: flex; align-items: center; gap: 5px; background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); border-radius: 6px; padding: 4px 8px; }
+    .live-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; animation: blink 2s infinite; }
+    .live-text { font-size: 10px; font-weight: 700; color: #22c55e; font-family: 'Syne', sans-serif; letter-spacing: 0.05em; }
+    .budget-pill { background: rgba(232,197,71,0.08); border: 1px solid rgba(232,197,71,0.2); color: #e8c547; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 6px; font-family: 'Syne', sans-serif; white-space: nowrap; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .quick-wrap { padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; overflow-x: auto; scrollbar-width: none; }
+    .quick-wrap::-webkit-scrollbar { display: none; }
+    .quick-row { display: flex; gap: 7px; width: max-content; }
+    .qp-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); color: #9a9db8; font-size: 12px; font-family: 'DM Sans', sans-serif; font-weight: 500; padding: 8px 13px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+    .qp-btn:active, .qp-btn:hover { background: rgba(232,197,71,0.1); border-color: rgba(232,197,71,0.35); color: #e8c547; }
+    .qp-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 18px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent; }
+
+    .welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; padding: 24px 20px; text-align: center; gap: 14px; }
+    .welcome-icon { width: 64px; height: 64px; background: linear-gradient(135deg, rgba(232,197,71,0.15), rgba(196,151,58,0.06)); border: 1px solid rgba(232,197,71,0.25); border-radius: 16px; display: flex; align-items: center; justify-content: center; }
+    .welcome h2 { font-family: 'Syne', sans-serif; font-size: 21px; font-weight: 700; color: #f0ece0; letter-spacing: -0.02em; }
+    .welcome p { font-size: 14px; color: #6b7090; max-width: 380px; line-height: 1.65; }
+    .welcome-tags { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
+    .tag { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); color: #7a7d95; font-size: 11px; padding: 4px 10px; border-radius: 5px; }
+
+    .message-row { display: flex; align-items: flex-start; gap: 10px; }
+    .user-row { flex-direction: row-reverse; }
+    .avatar { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+    .scout-avatar { background: rgba(232,197,71,0.1); border: 1px solid rgba(232,197,71,0.2); }
+    .user-avatar { background: #e8c547; }
+
+    .bubble { padding: 13px 16px; border-radius: 14px; max-width: calc(100% - 50px); line-height: 1.68; font-size: 14.5px; }
+    .user-bubble { background: rgba(232,197,71,0.1); border: 1px solid rgba(232,197,71,0.2); color: #f0ece0; border-bottom-right-radius: 4px; }
+    .assistant-bubble { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: #d4d4e8; border-bottom-left-radius: 4px; }
+    .bubble-content h1, .bubble-content h2 { font-family: 'Syne', sans-serif; color: #e8c547; margin: 14px 0 6px; font-size: 15px; font-weight: 700; }
+    .bubble-content h3 { font-family: 'Syne', sans-serif; color: #c4b070; margin: 10px 0 4px; font-size: 13.5px; }
+    .bubble-content strong { color: #f0ece0; }
+    .bubble-content ul { padding-left: 20px; margin: 7px 0; }
+    .bubble-content li { margin: 4px 0; color: #b8b8cc; }
+    .bubble-content a { color: #e8c547; word-break: break-all; text-underline-offset: 2px; }
+
+    .copy-btn { display: flex; align-items: center; gap: 5px; margin-top: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #6b7090; font-size: 11.5px; font-family: 'DM Sans', sans-serif; padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+    .copy-btn:active, .copy-btn:hover { background: rgba(232,197,71,0.08); border-color: rgba(232,197,71,0.25); color: #e8c547; }
+    .copy-btn.copied { color: #22c55e; border-color: rgba(34,197,94,0.3); }
+
+    .search-bubble { display: flex; align-items: center; gap: 9px; padding: 10px 14px; background: rgba(34,197,94,0.06); border: 1px solid rgba(34,197,94,0.15); border-radius: 10px; border-bottom-left-radius: 4px; }
+    .spin { width: 13px; height: 13px; border: 2px solid rgba(34,197,94,0.2); border-top-color: #22c55e; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .search-text { font-size: 13px; color: #22c55e; font-style: italic; }
+
+    .input-area { padding: 12px 20px 20px; border-top: 1px solid rgba(255,255,255,0.06); background: #0d0f1a; flex-shrink: 0; }
+    .input-row { display: flex; gap: 10px; align-items: flex-end; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 11px 14px; transition: border-color 0.2s; }
+    .input-row:focus-within { border-color: rgba(232,197,71,0.35); }
+    textarea { flex: 1; background: transparent; border: none; outline: none; color: #e8e8f0; font-family: 'DM Sans', sans-serif; font-size: 15px; resize: none; line-height: 1.5; min-height: 24px; max-height: 120px; }
+    textarea::placeholder { color: #4a4d65; }
+    .send-btn { width: 36px; height: 36px; background: linear-gradient(135deg, #e8c547, #c4973a); border: none; border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity 0.15s, transform 0.1s; margin-bottom: 1px; -webkit-tap-highlight-color: transparent; }
+    .send-btn:active { transform: scale(0.95); }
+    .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .input-hint { font-size: 11px; color: #2e3048; text-align: center; margin-top: 8px; }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <div class="logo-mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L3 7v10l9 5 9-5V7L12 2z" stroke="#1a1208" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M12 22V12M3 7l9 5 9-5" stroke="#1a1208" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="header-text">
+        <div class="header-title">Family SUV Scout</div>
+        <div class="header-sub">Edmonton · 7 passengers · $25,000 cash · Live search</div>
+      </div>
+      <div class="header-badges">
+        <div class="live-badge"><div class="live-dot"></div><span class="live-text">LIVE</span></div>
+        <div class="budget-pill">≤ $25K</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quick-wrap">
+    <div class="quick-row" id="quickRow"></div>
+  </div>
+
+  <div class="messages" id="messages">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <circle cx="11" cy="11" r="8" stroke="#e8c547" stroke-width="1.5"/>
+          <path d="M21 21l-4.35-4.35" stroke="#e8c547" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8 11h6M11 8v6" stroke="#e8c547" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2>Your car-buying assistant</h2>
+      <p>This tool already knows your situation — your budget, your kids, the baby, Alberta winters, everything. Tap a button or ask anything in plain English.</p>
+      <div class="welcome-tags">
+        <span class="tag">7 passengers incl. infant</span>
+        <span class="tag">Under $25,000 cash</span>
+        <span class="tag">2018+ · under 100K km</span>
+        <span class="tag">AWD or 4WD · Alberta winters</span>
+        <span class="tag">Heated seats + backup camera</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <textarea id="input" placeholder="Ask anything — or paste in a listing you found..." rows="1"></textarea>
+      <button class="send-btn" id="sendBtn" disabled>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z" stroke="#1a1208" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="input-hint">Tap Send or press Enter</div>
+  </div>
+</div>
+
+<script>
+  const SYSTEM_PROMPT = `You are an elite Edmonton, Alberta vehicle sourcing expert specializing in safe, reliable large-family SUVs. You search the web and find real, current listings and inventory. You never invent listings or prices.
+
+CLIENT SITUATION:
+- Single mother, cash buyer, under $25,000 CAD
+- 7 passengers: herself + 5 kids (ages 13, 15, 18, 22) + son's 18-year-old girlfriend
+- Infant (5 months) with rear-facing car seat in second row
+- Alberta winters — snow, ice, extreme cold, highway driving
+- Must be dependable in emergencies with children on board
+
+REQUIREMENTS:
+- 7 real seats, third row fits teenagers and young adults
+- Backup camera required
+- Heated seats strongly preferred
+- As many features as possible within budget (heated steering wheel, remote start, Apple CarPlay, blind spot monitoring, parking sensors, power liftgate, leather interior)
+- AWD or 4WD — both acceptable, evaluate both
+- 2018 or newer, under 100,000 km
+- No frame damage, no floods, no major rust
+- Clean title strongly preferred
+
+SEARCH ALL THESE SOURCES every time:
+- AutoTrader Canada (autotrader.ca)
+- Kijiji Autos (kijiji.ca)
+- Facebook Marketplace Edmonton
+- Edmonton and Alberta dealerships including small towns
+- Copart Alberta, Prairie Auctions, Regal Auctions, Canwest Auctions
+- Repo sales, fleet liquidation, rental selloffs, government fleet, estate sales
+- BC or Saskatchewan if significantly better value after transport
+
+VEHICLES TO CONSIDER (be honest and critical about each):
+- Hyundai Palisade 2020-2022
+- Kia Telluride 2020-2022
+- Toyota Highlander 2018-2021
+- Honda Pilot 2018-2021
+- Ford Explorer 2018-2021
+- Volkswagen Atlas 2018-2021
+- Chevrolet Traverse 2018-2021
+- Subaru Ascent 2019-2021
+- Any better option you find
+
+COMMUNICATION RULES:
+- Plain English only — explain any car term you use
+- When you mention a vehicle model, say what it is (e.g. "the Honda Pilot — a large 7-seat family SUV made by Honda")
+- Be direct, warm, and reassuring — this client is overwhelmed
+- Never invent listings — if you can't verify it, say so and give the best search strategy instead
+- Always provide direct URLs for real listings you find
+- Flag auction vehicle risks immediately: salvage title, flood damage, frame damage, hidden fees
+
+FOR EACH VEHICLE OR LISTING:
+1. Plain English verdict first — Smart buy / Worth looking at / Avoid, and why in one sentence
+2. Price vs what's fair in Edmonton right now
+3. What features it has that match her wishlist
+4. Any reliability concerns for that specific year
+5. What to check before buying it
+6. Negotiation advice if it's worth pursuing`;
+
+  const QUICK_PROMPTS = [
+    { label: "🔍 Show me what's available now", text: "Search AutoTrader, Kijiji, and Facebook Marketplace Edmonton right now. Show me the best large family SUVs available today that fit my situation. Include prices and links." },
+    { label: "🏆 What should I actually buy?", text: "Based on my situation — 7 passengers including an infant, Alberta winters, $25,000 cash — what are the top 3 vehicles I should actually be looking at right now and why? Keep it simple and plain." },
+    { label: "🚗 Is a Ford Explorer a good choice?", text: "Is a Ford Explorer a good choice for my situation? I need to carry 7 people including an infant, drive Alberta winters, and stay under $25,000. Search current Edmonton prices and be completely honest about the pros and cons." },
+    { label: "⭐ Best features for my budget", text: "What's the best I can realistically get for features — heated seats, backup camera, remote start, Apple CarPlay — in a 7-passenger SUV under $25,000 in Edmonton right now? Search what's actually available." },
+    { label: "⚠️ What should I avoid?", text: "What vehicles or situations should I completely avoid when shopping in this price range? What are the red flags in listings? What tricks do dealers pull?" },
+    { label: "🏭 Cheaper options — auctions and repos", text: "Are there cheaper options at auctions, repo sales, or fleet liquidations in Alberta right now? Search what's available and tell me honestly whether any of it is worth the risk for my situation." },
+    { label: "🔧 What do I check before buying?", text: "Give me a simple checklist of what to look for before I buy any used SUV. I'm not a mechanic — what can I check myself and what needs a mechanic?" },
+    { label: "💰 How do I negotiate?", text: "How do I negotiate the price down? What do I say, what do I offer first, and when do I walk away? Give me actual scripts I can use." },
+  ];
+
+  const messages = [];
+  let loading = false;
+
+  const quickRow = document.getElementById('quickRow');
+  QUICK_PROMPTS.forEach(qp => {
+    const btn = document.createElement('button');
+    btn.className = 'qp-btn';
+    btn.textContent = qp.label;
+    btn.addEventListener('click', () => sendMessage(qp.text));
+    quickRow.appendChild(btn);
+  });
+
+  const input = document.getElementById('input');
+  const sendBtn = document.getElementById('sendBtn');
+
+  input.addEventListener('input', () => {
+    sendBtn.disabled = !input.value.trim() || loading;
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+  });
+
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!loading && input.value.trim()) sendMessage(input.value);
+    }
+  });
+
+  sendBtn.addEventListener('click', () => {
+    if (!loading && input.value.trim()) sendMessage(input.value);
+  });
+
+  function setLoading(state) {
+    loading = state;
+    sendBtn.disabled = state || !input.value.trim();
+    document.querySelectorAll('.qp-btn').forEach(b => b.disabled = state);
+  }
+
+  function hideWelcome() {
+    const w = document.getElementById('welcome');
+    if (w) w.remove();
+  }
+
+  function formatText(text) {
+    return text
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+      .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+      .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+      .replace(/^- (.+)$/gm, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+      .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+      .replace(/(https?:\/\/[^\s<>"]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>')
+      .replace(/\n\n/g, '<br/><br/>')
+      .replace(/\n/g, '<br/>');
+  }
+
+  function addMessage(role, content) {
+    hideWelcome();
+    const messagesEl = document.getElementById('messages');
+    const row = document.createElement('div');
+    row.className = `message-row ${role === 'user' ? 'user-row' : ''}`;
+
+    const avatar = document.createElement('div');
+    avatar.className = `avatar ${role === 'user' ? 'user-avatar' : 'scout-avatar'}`;
+    avatar.innerHTML = role === 'user'
+      ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#1a1208" stroke-width="2"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#1a1208" stroke-width="2" stroke-linecap="round"/></svg>`
+      : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#e8c547" stroke-width="1.5"/><path d="M8 12l2.5 2.5L16 9" stroke="#e8c547" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+    const bubble = document.createElement('div');
+    bubble.className = `bubble ${role === 'user' ? 'user-bubble' : 'assistant-bubble'}`;
+    const bubbleContent = document.createElement('div');
+    bubbleContent.className = 'bubble-content';
+    bubbleContent.innerHTML = formatText(content);
+    bubble.appendChild(bubbleContent);
+
+    if (role === 'assistant') {
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-btn';
+      copyBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/></svg> Copy response`;
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(content).then(() => {
+          copyBtn.textContent = '✓ Copied';
+          copyBtn.classList.add('copied');
+          setTimeout(() => {
+            copyBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2"/></svg> Copy response`;
+            copyBtn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+      bubble.appendChild(copyBtn);
+    }
+
+    if (role === 'user') { row.appendChild(bubble); row.appendChild(avatar); }
+    else { row.appendChild(avatar); row.appendChild(bubble); }
+
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function addSearchingIndicator() {
+    hideWelcome();
+    const messagesEl = document.getElementById('messages');
+    const row = document.createElement('div');
+    row.className = 'message-row';
+    row.id = 'searchingIndicator';
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar scout-avatar';
+    avatar.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#e8c547" stroke-width="1.5"/><path d="M8 12l2.5 2.5L16 9" stroke="#e8c547" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const bubble = document.createElement('div');
+    bubble.className = 'search-bubble';
+    bubble.innerHTML = `<div class="spin"></div><span class="search-text">Searching listings...</span>`;
+    row.appendChild(avatar);
+    row.appendChild(bubble);
+    messagesEl.appendChild(row);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function removeSearchingIndicator() {
+    const el = document.getElementById('searchingIndicator');
+    if (el) el.remove();
+  }
+
+  async function sendMessage(text) {
+    if (!text.trim() || loading) return;
+    setLoading(true);
+    input.value = '';
+    input.style.height = 'auto';
+
+    messages.push({ role: 'user', content: text.trim() });
+    addMessage('user', text.trim());
+    addSearchingIndicator();
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1024,
+          system: SYSTEM_PROMPT,
+          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 5 }],
+          messages: messages,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error?.message || data.error || 'API error');
+      }
+
+      const reply = data.content
+        ?.filter(b => b.type === 'text')
+        .map(b => b.text)
+        .join('\n') || 'No response received.';
+
+      messages.push({ role: 'assistant', content: reply });
+      removeSearchingIndicator();
+      addMessage('assistant', reply);
+
+    } catch (err) {
+      removeSearchingIndicator();
+      addMessage('assistant', `Something went wrong: ${err.message}. Please try again.`);
+    } finally {
+      setLoading(false);
+    }
+  }
+</script>
+</body>
+</html>
